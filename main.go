@@ -32,10 +32,9 @@ type Config struct {
 	Setor     string `json:"setor"`
 	IDEmpresa int    `json:"idEmpresa"` // CORRIGIDO: Tipo alterado para int
 	// Agora, armazenaremos apenas o diretório base dos logs do PaperCut
-	PapercutLogDir    string `json:"papercutLogDir"`
-	ApiEndpoint       string `json:"apiEndpoint"`       // URL para envio de impressões
-	VerifyApiEndpoint string `json:"verifyApiEndpoint"` // URL para verificar se a impressão existe
-	PollingInterval   int    `json:"pollingIntervalSeconds"`
+	PapercutLogDir  string `json:"papercutLogDir"`
+	ApiBaseURL      string `json:"apiBaseUrl"` // Novo campo: apenas o endereço base
+	PollingInterval int    `json:"pollingIntervalSeconds"`
 }
 
 // PrintData representa a estrutura do JSON a ser enviado para a API.
@@ -108,10 +107,10 @@ func (m *myservice) Execute(args []string, r <-chan svc.ChangeRequest, changes c
 		return false, 1 // Falha ao iniciar se não puder criar o diretório
 	}
 
-	elog.Info(1, fmt.Sprintf("Config loaded: Setor=%s, IDEmpresa=%d, LogDir=%s, API=%s, VerifyAPI=%s",
-		cfg.Setor, cfg.IDEmpresa, cfg.PapercutLogDir, cfg.ApiEndpoint, cfg.VerifyApiEndpoint))
-	globalLogger.Println(fmt.Sprintf("Config loaded: Setor=%s, IDEmpresa=%d, LogDir=%s, API=%s, VerifyAPI=%s",
-		cfg.Setor, cfg.IDEmpresa, cfg.PapercutLogDir, cfg.ApiEndpoint, cfg.VerifyApiEndpoint))
+	elog.Info(1, fmt.Sprintf("Config loaded: Setor=%s, IDEmpresa=%d, LogDir=%s, ApiBaseUrl=%s",
+		cfg.Setor, cfg.IDEmpresa, cfg.PapercutLogDir, cfg.ApiBaseURL))
+	globalLogger.Println(fmt.Sprintf("Config loaded: Setor=%s, IDEmpresa=%d, LogDir=%s, ApiBaseUrl=%s",
+		cfg.Setor, cfg.IDEmpresa, cfg.PapercutLogDir, cfg.ApiBaseURL))
 
 	// ** ALTERADO: Processar logs e pendências imediatamente ao iniciar **
 	globalLogger.Println("PrintWatch: Executando tarefa inicial de processamento de pendências...")
@@ -377,22 +376,16 @@ func readConfig() (*Config, error) {
 		return nil, fmt.Errorf("failed to parse config.json: %w", err)
 	}
 
-	// Definir valores padrão se não estiverem no config.json
 	if config.PapercutLogDir == "" {
-		// Ajuste este caminho para o diretório base dos seus logs do PaperCut
 		config.PapercutLogDir = "C:\\Program Files (x86)\\PaperCut Print Logger\\logs\\csv\\daily"
 		globalLogger.Println("WARNING: papercutLogDir not set in config.json, using default: " + config.PapercutLogDir)
 	}
-	if config.ApiEndpoint == "" {
-		config.ApiEndpoint = "http://27.12.1.157:3005/central/receptprintreq"
-		globalLogger.Println("WARNING: apiEndpoint not set in config.json, using default: " + config.ApiEndpoint)
-	}
-	if config.VerifyApiEndpoint == "" {
-		config.VerifyApiEndpoint = "http://27.12.1.157:3005/central/verifyimpression"
-		globalLogger.Println("WARNING: verifyApiEndpoint not set in config.json, using default: " + config.VerifyApiEndpoint)
+	if config.ApiBaseURL == "" {
+		config.ApiBaseURL = "http://localhost:3005"
+		globalLogger.Println("WARNING: apiBaseUrl not set in config.json, using default: " + config.ApiBaseURL)
 	}
 	if config.PollingInterval == 0 {
-		config.PollingInterval = 10 // Padrão 10 segundos
+		config.PollingInterval = 10
 		globalLogger.Println("WARNING: pollingIntervalSeconds not set in config.json, using default: 10 seconds")
 	}
 
@@ -408,27 +401,27 @@ func getPapercutLogPath(logDir string, t time.Time) string {
 
 // NOVO: tryProcessImpression tenta enviar uma impressão e retorna true em sucesso, false em falha recuperável
 func tryProcessImpression(cfg *Config, data PrintData, sourceFile string) bool {
-	exists, err := verifyImpressionExists(cfg.VerifyApiEndpoint, data)
+	verifyURL := cfg.ApiBaseURL + "/central/verifyimpression"
+	exists, err := verifyImpressionExists(verifyURL, data)
 	if err != nil {
-		// Falha na verificação é um erro recuperável, a API pode estar offline
 		globalLogger.Println(fmt.Sprintf("API_COMM_FAIL (Verify) for user %s from source '%s'. Error: %v", data.Usuario, sourceFile, err))
 		return false
 	}
 
 	if exists {
 		globalLogger.Println(fmt.Sprintf("Impression for user %s from source '%s' already exists. Skipping.", data.Usuario, sourceFile))
-		return true // Sucesso, pois a impressão já existe
+		return true
 	}
 
-	err = sendDataToAPI(cfg.ApiEndpoint, data)
+	sendURL := cfg.ApiBaseURL + "/central/receptprintreq"
+	err = sendDataToAPI(sendURL, data)
 	if err != nil {
-		// Falha no envio é um erro recuperável
 		globalLogger.Println(fmt.Sprintf("API_COMM_FAIL (Send) for user %s from source '%s'. Error: %v", data.Usuario, sourceFile, err))
 		return false
 	}
 
 	globalLogger.Println(fmt.Sprintf("Successfully sent print data for user %s from source '%s'.", data.Usuario, sourceFile))
-	return true // Sucesso total
+	return true
 }
 
 // NOVO: setupPendingDir inicializa o diretório para armazenar impressões pendentes.

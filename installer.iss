@@ -43,6 +43,7 @@ var
   ConfigPage: TWizardPage;
   SetorEdit: TNewEdit;
   IdEmpresaEdit: TNewEdit;
+  ApiEndpointEdit: TNewEdit; // NOVO
 
 procedure InitializeWizard;
 begin
@@ -91,6 +92,28 @@ begin
     Width := ScaleX(200);
     Height := ScaleY(21);
   end;
+
+  // NOVO CAMPO PARA URL DA API
+  with TNewStaticText.Create(ConfigPage) do
+  begin
+    Parent := ConfigPage.Surface;
+    Caption := 'URL da API:';
+    Left := ScaleX(0);
+    Top := ScaleY(65);
+    Width := ScaleX(80);
+    Height := ScaleY(15);
+  end;
+
+  ApiEndpointEdit := TNewEdit.Create(ConfigPage);
+  with ApiEndpointEdit do
+  begin
+    Parent := ConfigPage.Surface;
+    Left := ScaleX(90);
+    Top := ScaleY(65);
+    Width := ScaleX(200);
+    Height := ScaleY(21);
+    Text := 'http://11.1.133.2:3005'; // valor padrão
+  end;
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
@@ -102,11 +125,12 @@ begin
   begin
     FileName := ExpandConstant('{app}\config.json');
 
-    SetArrayLength(JsonContentArray, 4);
+    SetArrayLength(JsonContentArray, 5);
     JsonContentArray[0] := '{';
     JsonContentArray[1] := '  "setor": "' + SetorEdit.Text + '",';
-    JsonContentArray[2] := '  "idEmpresa": ' + IdEmpresaEdit.Text;
-    JsonContentArray[3] := '}';
+    JsonContentArray[2] := '  "idEmpresa": ' + IdEmpresaEdit.Text + ',';
+    JsonContentArray[3] := '  "apiBaseUrl": "' + ApiEndpointEdit.Text + '"';
+    JsonContentArray[4] := '}';
 
     if not SaveStringsToFile(FileName, JsonContentArray, False) then
     begin
