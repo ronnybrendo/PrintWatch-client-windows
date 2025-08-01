@@ -381,7 +381,7 @@ func readConfig() (*Config, error) {
 		globalLogger.Println("WARNING: papercutLogDir not set in config.json, using default: " + config.PapercutLogDir)
 	}
 	if config.ApiBaseURL == "" {
-		config.ApiBaseURL = "http://localhost:3005"
+		config.ApiBaseURL = "http://localhost:3005" // Valor padrão - será substituído pelo config.json
 		globalLogger.Println("WARNING: apiBaseUrl not set in config.json, using default: " + config.ApiBaseURL)
 	}
 	if config.PollingInterval == 0 {

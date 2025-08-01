@@ -11,7 +11,6 @@ OutputBaseFilename=PrintWatch_Installer_Go_Installer
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-; --- NOVAS DIRETIVAS DE PERSONALIZAÇÃO ---
 //WizardImageFile=Source\logo_grande.bmp
 //WizardSmallImageFile=Source\logo_pequeno.bmp
 //LicenseFile=Source\licenca.txt
@@ -22,7 +21,6 @@ UninstallDisplayIcon={app}\PrintWatchService.exe
 CustomMessage_ConfigPage_Caption=Configuração do PrintWatch
 CustomMessage_ConfigPage_Description=Por favor, insira as informações de configuração para o PrintWatch:
 
-; --- NOVA SEÇÃO PARA MENSAGENS PERSONALIZADAS ---
 [Messages]
 WelcomeLabel1=Bem-vindo ao Assistente de Instalação do [name]!
 SetupAppTitle=Instalando o PrintWatch
@@ -30,7 +28,6 @@ BeveledLabel=Este assistente instalará o PrintWatch em seu computador. Recomend
 
 [Dirs]
 Name: "{app}"
-; Não precisa mais da pasta 'daemon' para node-windows
 
 [Files]
 ; Copia o executável do seu serviço Go
@@ -112,7 +109,7 @@ begin
     Top := ScaleY(65);
     Width := ScaleX(200);
     Height := ScaleY(21);
-    Text := 'http://11.1.133.2:3005'; // valor padrão
+    Text := 'http://localhost:3005'; // valor padrão - será configurado pelo usuário
   end;
 end;
 

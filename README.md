@@ -65,7 +65,7 @@ O PrintWatch Client é um serviço Windows desenvolvido em Go que monitora autom
 2. **Configure durante a instalação**
    - **Setor**: Nome do setor/departamento
    - **ID da Empresa**: Identificador numérico da empresa
-   - **URL da API**: Endereço da API (ex: `http://localhost:3005`)
+   - **URL da API**: Endereço da API (ex: `http://seu-servidor:3005`)
 
 3. **Instalação automática**
    - O instalador copia os arquivos necessários
@@ -84,7 +84,7 @@ O PrintWatch Client é um serviço Windows desenvolvido em Go que monitora autom
    {
      "setor": "CPD",
      "idEmpresa": 2,
-     "apiBaseUrl": "http://localhost:3005"
+     "apiBaseUrl": "http://seu-servidor:3005"
    }
    ```
 
@@ -105,7 +105,7 @@ O arquivo `config.json` deve estar no mesmo diretório do executável:
   "setor": "CPD",
   "idEmpresa": 2,
   "papercutLogDir": "C:\\Program Files (x86)\\PaperCut Print Logger\\logs\\csv\\daily",
-  "apiBaseUrl": "http://localhost:3005",
+  "apiBaseUrl": "http://seu-servidor:3005",
   "pollingIntervalSeconds": 10
 }
 ```
@@ -117,7 +117,7 @@ O arquivo `config.json` deve estar no mesmo diretório do executável:
 | `setor` | Nome do setor/departamento | - |
 | `idEmpresa` | ID numérico da empresa | - |
 | `papercutLogDir` | Diretório dos logs do PaperCut | `C:\Program Files (x86)\PaperCut Print Logger\logs\csv\daily` |
-| `apiBaseUrl` | URL base da API | `http://localhost:3005` |
+| `apiBaseUrl` | URL base da API | `http://seu-servidor:3005` |
 | `pollingIntervalSeconds` | Intervalo de verificação (segundos) | `10` |
 
 ### Configuração do PaperCut
