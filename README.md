@@ -33,6 +33,7 @@ O PrintWatch Client é um serviço Windows desenvolvido em Go que monitora autom
 ### Software
 - **PaperCut Print Logger**: Deve estar configurado e gerando logs CSV
 - **API PrintWatch**: Servidor da API deve estar acessível
+  - Repositório: [https://github.com/ronnybrendo/PrintWatch-api-nodejs](https://github.com/ronnybrendo/PrintWatch-api-nodejs)
 
 ## 🚀 Instalação
 
@@ -204,7 +205,7 @@ PrintWacth-client-windows/
 ```
 Erro: "Failed to read config.json"
 ```
-**Solução**: Verifique se o arquivo `config.json` existe e está válido
+**Solução**: Verifique se o arquivo `config.json` existe e está válido na pasta de instalação
 
 #### 2. API não acessível
 ```
@@ -264,6 +265,8 @@ Para ativar logs detalhados:
    git clone <repository-url>
    cd PrintWacth-client-windows
    ```
+
+   **API Node.js**: [https://github.com/ronnybrendo/PrintWatch-api-nodejs](https://github.com/ronnybrendo/PrintWatch-api-nodejs)
 
 3. **Instale dependências**
    ```bash
